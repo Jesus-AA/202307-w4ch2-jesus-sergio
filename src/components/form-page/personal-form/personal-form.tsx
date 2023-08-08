@@ -1,6 +1,45 @@
+import { SyntheticEvent, useState } from 'react';
+
+type PersonalData = {
+  userName: string;
+  lastName: string;
+  userBirthdate: string;
+  gender: string;
+  userEmail: string;
+  wantNewsLetter: boolean;
+};
+
 export function PersonalForm() {
+  const initialState: PersonalData = {
+    userName: '',
+    lastName: '',
+    userBirthdate: '',
+    gender: '',
+    userEmail: '',
+    wantNewsLetter: false,
+  };
+
+  const [userPersonalData, setUserPersonalData] =
+    useState<PersonalData>(initialState);
+
+  const handleSubmit = (ev: SyntheticEvent) => {
+    ev.preventDefault();
+    console.log('Enviando', userPersonalData);
+  };
+
+  const handleChange = (ev: SyntheticEvent) => {
+    const formControl = ev.target as HTMLFormElement;
+    setUserPersonalData({
+      ...userPersonalData,
+      [formControl.name]:
+        formControl.type === 'checkbox'
+          ? formControl.checked
+          : formControl.value,
+    });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <h2>Ingresa los siguientes datos:</h2>
 
       <div className="form-control">
@@ -10,6 +49,7 @@ export function PersonalForm() {
           id="user-name"
           placeholder="Ingresa tu nombre"
           required
+          onChange={handleChange}
         />
 
         <input
@@ -18,16 +58,23 @@ export function PersonalForm() {
           id="last-name"
           placeholder="Ingresa tu apellido"
           required
+          onChange={handleChange}
         />
       </div>
 
       <div>
         <label htmlFor="user-birthdate">Fecha de nacimiento</label>
-        <input type="date" name="userBirthdate" id="user-birthdate" />
+        <input
+          type="date"
+          name="userBirthdate"
+          id="user-birthdate"
+          required
+          onChange={handleChange}
+        />
       </div>
 
       <legend>Selecciona tu género</legend>
-      <div>
+      <fieldset className="gender" onChange={handleChange}>
         <input type="radio" name="gender" id="male" value="M" />
         <label htmlFor="male">Masculino</label>
         <input type="radio" name="gender" id="female" value="F" />
@@ -36,7 +83,7 @@ export function PersonalForm() {
         <label htmlFor="other">Otro</label>
         <input type="radio" name="gender" id="na" value="NA" />
         <label htmlFor="na">Prefiero no decir</label>
-      </div>
+      </fieldset>
 
       <div>
         <input
@@ -44,15 +91,23 @@ export function PersonalForm() {
           name="userEmail"
           id="email"
           placeholder="Ingresa tu correo electrónico"
+          required
+          onChange={handleChange}
         />
       </div>
 
       <div>
-        <input type="checkbox" name="wantNewsLetter" id="newsletter" />
+        <input
+          type="checkbox"
+          name="wantNewsLetter"
+          id="newsletter"
+          onChange={handleChange}
+        />
         <label htmlFor="newsletter">
           ¿Desea recibir información de nuestra newsletter?
         </label>
       </div>
+      <button type="submit">Aceptar</button>
     </form>
   );
 }
